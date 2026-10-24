@@ -221,6 +221,7 @@ async function runTests() {
 async function runTestCase(testCase: TestCase, host: string, port: number): Promise<boolean> {
     try {
         const conn = await Deno.connect({ hostname: host, port });
+        conn.unref();
 
         // Send the request
         await conn.write(encoder.encode(testCase.request));
@@ -258,6 +259,7 @@ async function runTestCase(testCase: TestCase, host: string, port: number): Prom
                     console.log(
                         `${isSuccess ? "✅" : "❌"} ${testCase.description}: Response Status Code ${statusCode}, Expected ranges: ${JSON.stringify(testCase.expectedStatus)}`
                     );
+                    conn.close();
                     return resolve(isSuccess);
                 } catch {
 
